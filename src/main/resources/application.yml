@@ -1,0 +1,11 @@
+# postgre datasource
+spring:
+  datasource:
+    url: jdbc:postgresql://satao.db.elephantsql.com:5432/vbvhwawb
+    username: vbvhwawb
+    password: CCPkGiufh3vdALW7pa8VVcib6t0hnElO
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
