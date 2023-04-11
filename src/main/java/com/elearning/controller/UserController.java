@@ -13,19 +13,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/api/v1")
 public class UserController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtTokenProvider tokenProvider;
-
 
     @PostMapping("/user")
     public ResponseEntity<Object> createUser(@ModelAttribute RegisterDTO registerDTO){
@@ -50,25 +45,12 @@ public class UserController {
         return new ResponseEntity<>(registerResponse,HttpStatus.OK);
     }
 
-    @PostMapping("/user/login")
-    public ResponseEntity<Object> authenticateUser(@ModelAttribute LoginDTO loginDto){
-        Authentication authentication = null;
-        LoginResponse loginResponse = new LoginResponse();
-        try{
-            authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    loginDto.getUsername(), loginDto.getPassword()));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            String jwt = tokenProvider.generateToken((MyUser) authentication.getPrincipal());
-            loginResponse.setMessage("Login successful !");
-            loginResponse.setCode(200);
-            loginResponse.setSuccess(true);
-            loginResponse.setAccessToken(jwt);
-        }catch (Exception e){
-            loginResponse.setCode(401);
-            loginResponse.setMessage("Username and password incorrect !");
-        }finally {
-            return new ResponseEntity<>(loginResponse, HttpStatus.OK);
-        }
+
+    @GetMapping("/user/info")
+    public ResponseEntity<Object> getUserInfo(Principal principal){
+        String username = principal.getName();
+        User user = userService.findByUsername(username);
+        return new ResponseEntity<>(user,HttpStatus.OK);
     }
 
 }
