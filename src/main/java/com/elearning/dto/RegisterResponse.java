@@ -4,12 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class RegisterResponse {
-    private Boolean success;
-    private Integer code;
-
+public class RegisterResponse extends ResponseDTO{
     @JsonProperty("user")
     private UserDTO userDTO;
 
-    private String message;
 }

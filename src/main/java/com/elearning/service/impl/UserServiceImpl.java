@@ -93,5 +93,16 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public boolean updateEmail(String email, Long userId) {
+        try {
+            userRepository.updateEmail(email,userId);
+            return true;
+        }catch (Exception ex){
+            return false;
+        }
+    }
+
 
 }

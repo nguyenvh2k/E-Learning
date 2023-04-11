@@ -1,31 +1,37 @@
 package com.elearning.controller;
 
-import com.elearning.dto.*;
+import com.elearning.dto.ChangeEmailDTO;
+import com.elearning.dto.RegisterDTO;
+import com.elearning.dto.RegisterResponse;
+import com.elearning.dto.UserDTO;
 import com.elearning.entity.User;
-import com.elearning.jwt.JwtTokenProvider;
 import com.elearning.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/v1")
+@SecurityRequirement(name = "bearerAuth")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
+    /**
+     * Create new user
+     * @param registerDTO
+     * @return Object
+     */
     @PostMapping("/user")
     public ResponseEntity<Object> createUser(@ModelAttribute RegisterDTO registerDTO){
         User user = userService.saveUser(registerDTO);
         RegisterResponse registerResponse = new RegisterResponse();
+        registerResponse.setType("Register");
         if (user != null){
             registerResponse.setSuccess(true);
             UserDTO dto = new UserDTO();
@@ -46,11 +52,61 @@ public class UserController {
     }
 
 
+
+    /**
+     * Get info user
+     * @param principal
+     * @return Object
+     */
     @GetMapping("/user/info")
     public ResponseEntity<Object> getUserInfo(Principal principal){
         String username = principal.getName();
         User user = userService.findByUsername(username);
         return new ResponseEntity<>(user,HttpStatus.OK);
+    }
+
+    /**
+     * Change email
+     *
+     * @param email
+     * @param principal
+     * @return Object
+     */
+    @PutMapping("/user/email")
+    public ResponseEntity<Object> changeEmail(@RequestParam(value = "email",required = true,defaultValue = "")String email,
+                                              Principal principal){
+        String username = principal.getName();
+        User user= userService.findByUsername(username);
+        Boolean result = userService.updateEmail(email,user.getId());
+        ChangeEmailDTO changeEmailDTO = new ChangeEmailDTO();
+        changeEmailDTO.setType("ChangeEmail");
+        if (!result){
+            changeEmailDTO.setCode(401);
+            changeEmailDTO.setSuccess(false);
+            changeEmailDTO.setMessage("Change email failed !");
+        }else {
+            changeEmailDTO.setCode(200);
+            changeEmailDTO.setSuccess(true);
+            changeEmailDTO.setMessage("Change email successfully !");
+        }
+        return new ResponseEntity<>(changeEmailDTO,HttpStatus.OK);
+    }
+
+    /**
+     * Change password
+     * @param oldPassword
+     * @param newPassword
+     * @param principal
+     * @return Object
+     */
+    @PutMapping("/user/password")
+    public ResponseEntity<Object> changePassword(@RequestParam(value = "oldPassword",required = true,defaultValue = "")String oldPassword,
+                                                 @RequestParam(value = "newPassword",required = true,defaultValue = "")String newPassword,
+                                                 Principal principal){
+        String username = principal.getName();
+        User user= userService.findByUsername(username);
+        Boolean result = false;
+        return new ResponseEntity<>(false,HttpStatus.OK);
     }
 
 }

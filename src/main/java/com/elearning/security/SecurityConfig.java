@@ -12,6 +12,7 @@ import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -64,6 +65,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/v1/auth/**").permitAll()// Cho phép tất cả mọi người truy cập vào địa chỉ này
                 .antMatchers(HttpMethod.POST,"/api/v1/user/**").permitAll()
                 .antMatchers(HttpMethod.GET,"/api/v1/user/**").hasAnyAuthority(SystemConstant.ROLE_MEMBER)
+                .antMatchers("/swagger-ui/**").permitAll()
+                .antMatchers("/swagger-ui.html").permitAll()
+                .antMatchers("/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()
@@ -71,5 +75,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // Thêm một lớp Filter kiểm tra jwt
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
+
 
 }

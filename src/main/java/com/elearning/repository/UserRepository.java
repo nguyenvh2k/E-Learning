@@ -16,10 +16,10 @@ public interface UserRepository extends JpaRepository<User,Long> {
     User findByUsernameOrEmail(String username,String email);
 
     @Modifying
-    @Query(value ="update users u set u.email=:userEmail where u.id=:userId " ,nativeQuery = true)
-    void updateEmail(@Param("userEmail")String userEmail,@Param("userId")String userId);
+    @Query(value ="update users set email=:userEmail where id=:userId " ,nativeQuery = true)
+    void updateEmail(@Param("userEmail")String userEmail,@Param("userId")Long userId);
 
     @Modifying
-    @Query(value = "update users u set u.password=:userPass where u.id=:userId",nativeQuery = true)
+    @Query(value = "update users set password=:userPass where id=:userId",nativeQuery = true)
     void updatePassword(@Param("userPass")String userPass,@Param("userId")String userId);
 }
