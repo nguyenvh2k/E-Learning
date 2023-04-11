@@ -23,7 +23,6 @@ public class RegisterDTO {
     @NotEmpty
     private String lastName;
 
-
     private String createdAt;
     private String modifiedAt;
 }

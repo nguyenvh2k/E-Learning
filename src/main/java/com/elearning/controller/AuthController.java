@@ -20,27 +20,6 @@ import javax.servlet.http.HttpServletResponse;
 @CrossOrigin(origins = "*")
 public class AuthController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @PostMapping("/login")
-    public ResponseEntity<Object> authenticateUser(@RequestBody LoginDTO loginDto){
-        Authentication authentication = null;
-        try{
-            authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    loginDto.getUsername(), loginDto.getPassword()));
-        }catch (Exception e){
-            LoginResponse loginResponse = new LoginResponse();
-            loginResponse.setMessage("Username and password incorrect !");
-            return new ResponseEntity<>(loginResponse, HttpStatus.OK);
-        }
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setMessage("Login successful !");
-        loginResponse.setUserInfo(authentication.getPrincipal());
-        return new ResponseEntity<>(loginResponse, HttpStatus.OK);
-    }
 
     @GetMapping("/test")
     public ResponseEntity<Object> authorizedUser(){

@@ -1,12 +1,15 @@
 package com.elearning.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import org.springframework.stereotype.Component;
 
-@Component
 @Data
 public class RegisterResponse {
     private Boolean success;
-    private Object data;
+    private Integer code;
+
+    @JsonProperty("user")
+    private UserDTO userDTO;
+
     private String message;
 }
