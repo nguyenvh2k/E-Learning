@@ -31,6 +31,11 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRoleService userRoleService;
 
+    @Override
+    public User findById(Long userId) {
+        return userRepository.findById(userId).orElse(null);
+    }
+
     /**
      * Hàm insert user
      * Nếu role member chưa tồn tại add role vào
@@ -43,7 +48,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public User saveUser(RegisterDTO dto) {
-
         Random rd = new Random();
 
         Boolean userNameExist = checkExistUsernameOrEmail(dto.getUsername(),dto.getEmail());

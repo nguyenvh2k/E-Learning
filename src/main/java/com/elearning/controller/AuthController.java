@@ -1,17 +1,28 @@
 package com.elearning.controller;
 
-import com.elearning.dto.LoginDTO;
-import com.elearning.dto.LoginResponseDTO;
-import com.elearning.dto.MyUser;
+import com.elearning.dto.*;
+import com.elearning.entity.RefreshToken;
+import com.elearning.entity.User;
+import com.elearning.exception.TokenRefreshException;
 import com.elearning.jwt.JwtTokenProvider;
+import com.elearning.repository.RoleRepository;
+import com.elearning.service.impl.CustomUserDetailsService;
+import com.elearning.service.impl.RefreshTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -24,6 +35,12 @@ public class AuthController {
     @Autowired
     private JwtTokenProvider tokenProvider;
 
+    @Autowired
+    private RefreshTokenService refreshTokenService;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
     @PostMapping("/auth")
     public ResponseEntity<Object> authenticateUser(@ModelAttribute LoginDTO loginDto){
         Authentication authentication = null;
@@ -34,10 +51,13 @@ public class AuthController {
                     loginDto.getUsername(), loginDto.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = tokenProvider.generateToken((MyUser) authentication.getPrincipal());
+            MyUser myUser = (MyUser) authentication.getPrincipal();
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(myUser.getId());
             loginResponseDTO.setMessage("Login successfully !");
             loginResponseDTO.setCode(200);
             loginResponseDTO.setSuccess(true);
             loginResponseDTO.setAccessToken(jwt);
+            loginResponseDTO.setRefreshToken(refreshToken.getToken());
         }catch (Exception e){
             loginResponseDTO.setCode(401);
             loginResponseDTO.setMessage("Username or password are incorrect !");
@@ -68,5 +88,17 @@ public class AuthController {
         }
     }
 
-
+    @PostMapping("/auth/refreshtoken")
+    public ResponseEntity<?> refreshToken(@ModelAttribute TokenRefreshRequest request) throws Exception {
+        String requestRefreshToken = request.getRefreshToken();
+        Optional<RefreshToken> refreshTokenOptional = refreshTokenService.findByToken(requestRefreshToken);
+        if (!refreshTokenOptional.isPresent()){
+            throw new TokenRefreshException(requestRefreshToken,"Token is invalid or expired !");
+        }
+         RefreshToken refreshToken =
+                refreshTokenService.verifyExpiration(refreshTokenOptional.get());
+        User user =refreshToken.getUser();
+        String token = tokenProvider.generateTokenById(user.getId());
+        return ResponseEntity.ok().body(new TokenRefreshResponse(token,requestRefreshToken));
+    }
 }

@@ -56,5 +56,9 @@ public class User {
     @JsonIgnore
     private List<UserRole> userRoles = new ArrayList<>();
 
+    @OneToOne(mappedBy = "user")
+    @JsonIgnore
+    private RefreshToken refreshToken;
+
 
 }

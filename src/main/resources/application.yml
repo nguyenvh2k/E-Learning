@@ -19,3 +19,12 @@ logging:
     org:
       hibernate:
         SQL: debug
+
+jwt:
+  app:
+    jwtRefreshExpirationMs: 64800000
+
+server:
+  error:
+    include-stacktrace: never
+    include-message: always

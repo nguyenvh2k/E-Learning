@@ -1,15 +1,14 @@
 package com.elearning.controller;
 
-import com.elearning.dto.ChangeEmailDTO;
-import com.elearning.dto.RegisterDTO;
-import com.elearning.dto.RegisterResponse;
-import com.elearning.dto.UserDTO;
+import com.elearning.dto.*;
 import com.elearning.entity.User;
 import com.elearning.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -21,6 +20,7 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
 
     /**
      * Create new user
@@ -55,13 +55,13 @@ public class UserController {
 
     /**
      * Get info user
-     * @param principal
+     * @param authentication
      * @return Object
      */
     @GetMapping("/user/info")
-    public ResponseEntity<Object> getUserInfo(Principal principal){
-        String username = principal.getName();
-        User user = userService.findByUsername(username);
+    public ResponseEntity<Object> getUserInfo(Authentication authentication){
+        MyUser myUser = (MyUser) authentication.getPrincipal();
+        User user = userService.findById(myUser.getId());
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
 
