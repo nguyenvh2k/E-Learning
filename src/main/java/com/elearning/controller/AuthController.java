@@ -105,7 +105,7 @@ public class AuthController {
         return ResponseEntity.ok().body(new TokenRefreshResponse(token,requestRefreshToken));
     }
 
-    @PostMapping("/auth/logout")
+    @GetMapping("/auth/logout")
     public ResponseEntity<?> logout() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
