@@ -3,14 +3,18 @@ package com.elearning.controller;
 import com.elearning.dto.*;
 import com.elearning.entity.User;
 import com.elearning.service.UserService;
+import com.elearning.service.impl.RefreshTokenService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 
 @RestController
@@ -20,6 +24,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RefreshTokenService refreshTokenService;
 
 
     /**
@@ -108,5 +115,6 @@ public class UserController {
         Boolean result = false;
         return new ResponseEntity<>(false,HttpStatus.OK);
     }
+
 
 }

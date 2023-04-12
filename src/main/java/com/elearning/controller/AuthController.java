@@ -106,12 +106,14 @@ public class AuthController {
     }
 
     @PostMapping("/auth/logout")
-    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<?> logout() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
-            new SecurityContextLogoutHandler().logout(request, response, auth);
             refreshTokenService.deleteByUserId(((MyUser)auth.getPrincipal()).getId());
+            return ResponseEntity.ok().body("Logout successfully !");
+        }else {
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok().body("Logout successfully !");
     }
+
 }

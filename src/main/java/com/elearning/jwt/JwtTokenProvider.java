@@ -5,8 +5,13 @@ import com.elearning.dto.MyUser;
 import com.elearning.service.impl.CustomUserDetailsService;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.WebUtils;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.Map;
 
@@ -18,6 +23,7 @@ public class JwtTokenProvider {
     private final  long JWT_EXPIRATION = 604800000L;
 
     private final  long JWT_REFRESH_EXPIRATION = 6048000000L;
+
 
     //tao ra jwt tu thong tin user
     public String generateToken(MyUser myUser){
