@@ -21,5 +21,5 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     @Modifying
     @Query(value = "update users set password=:userPass where id=:userId",nativeQuery = true)
-    void updatePassword(@Param("userPass")String userPass,@Param("userId")String userId);
+    void updatePassword(@Param("userPass")String userPass,@Param("userId")Long userId);
 }

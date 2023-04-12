@@ -103,17 +103,22 @@ public class UserController {
      * Change password
      * @param oldPassword
      * @param newPassword
-     * @param principal
+     * @param authentication
      * @return Object
      */
     @PutMapping("/user/password")
     public ResponseEntity<Object> changePassword(@RequestParam(value = "oldPassword",required = true,defaultValue = "")String oldPassword,
                                                  @RequestParam(value = "newPassword",required = true,defaultValue = "")String newPassword,
-                                                 Principal principal){
-        String username = principal.getName();
-        User user= userService.findByUsername(username);
-        Boolean result = false;
-        return new ResponseEntity<>(false,HttpStatus.OK);
+                                                 Authentication authentication){
+        MyUser myUser = (MyUser) authentication.getPrincipal();
+        User user = userService.findById(myUser.getId());
+        userService.updatePassword(user,oldPassword,newPassword);
+        PasswordResponse passwordResponse = new PasswordResponse();
+        passwordResponse.setSuccess(true);
+        passwordResponse.setType("Change password");
+        passwordResponse.setCode(200);
+        passwordResponse.setMessage("Change password successfully !");
+        return new ResponseEntity<>(passwordResponse,HttpStatus.OK);
     }
 
 
