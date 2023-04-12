@@ -17,8 +17,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,5 +103,15 @@ public class AuthController {
         User user =refreshToken.getUser();
         String token = tokenProvider.generateTokenById(user.getId());
         return ResponseEntity.ok().body(new TokenRefreshResponse(token,requestRefreshToken));
+    }
+
+    @PostMapping("/auth/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+            refreshTokenService.deleteByUserId(((MyUser)auth.getPrincipal()).getId());
+        }
+        return ResponseEntity.ok().body("Logout successfully !");
     }
 }
