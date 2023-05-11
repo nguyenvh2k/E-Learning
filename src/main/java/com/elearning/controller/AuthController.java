@@ -1,12 +1,12 @@
 package com.elearning.controller;
 
+import com.elearning.constant.SystemConstant;
 import com.elearning.dto.*;
 import com.elearning.entity.RefreshToken;
 import com.elearning.entity.User;
 import com.elearning.exception.TokenRefreshException;
 import com.elearning.jwt.JwtTokenProvider;
 import com.elearning.repository.RoleRepository;
-import com.elearning.service.impl.CustomUserDetailsService;
 import com.elearning.service.impl.RefreshTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,17 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -47,8 +39,8 @@ public class AuthController {
     @PostMapping("/auth")
     public ResponseEntity<Object> authenticateUser(@ModelAttribute LoginDTO loginDto){
         Authentication authentication = null;
-        LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
-        loginResponseDTO.setType("Login");
+        LoginAbstractResponseDTO loginResponseDTO = new LoginAbstractResponseDTO();
+        loginResponseDTO.setType(SystemConstant.TYPE_LOGIN);
         try{
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     loginDto.getUsername(), loginDto.getPassword()));
@@ -57,22 +49,21 @@ public class AuthController {
             MyUser myUser = (MyUser) authentication.getPrincipal();
             RefreshToken refreshToken = refreshTokenService.createRefreshToken(myUser.getId());
             loginResponseDTO.setMessage("Login successfully !");
-            loginResponseDTO.setCode(200);
+            loginResponseDTO.setCode(SystemConstant.CODE_200);
             loginResponseDTO.setSuccess(true);
             loginResponseDTO.setAccessToken(jwt);
             loginResponseDTO.setRefreshToken(refreshToken.getToken());
         }catch (Exception e){
-            loginResponseDTO.setCode(401);
+            loginResponseDTO.setCode(SystemConstant.CODE_401);
             loginResponseDTO.setMessage("Username or password are incorrect !");
-        }finally {
-            return new ResponseEntity<>(loginResponseDTO, HttpStatus.OK);
         }
+            return new ResponseEntity<>(loginResponseDTO, HttpStatus.OK);
     }
 
     @PostMapping("/auth/json")
-    public ResponseEntity<Object> authenticateUserVerJson(@RequestBody LoginDTO loginDto){
+    public ResponseEntity<Object> authenticateUserVerJson(@ModelAttribute LoginDTO loginDto){
         Authentication authentication = null;
-        LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
+        LoginAbstractResponseDTO loginResponseDTO = new LoginAbstractResponseDTO();
         loginResponseDTO.setType("Login");
         try{
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
@@ -80,15 +71,14 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = tokenProvider.generateToken((MyUser) authentication.getPrincipal());
             loginResponseDTO.setMessage("Login successfully !");
-            loginResponseDTO.setCode(200);
+            loginResponseDTO.setCode(SystemConstant.CODE_200);
             loginResponseDTO.setSuccess(true);
             loginResponseDTO.setAccessToken(jwt);
         }catch (Exception e){
-            loginResponseDTO.setCode(401);
+            loginResponseDTO.setCode(SystemConstant.CODE_401);
             loginResponseDTO.setMessage("Username or password are incorrect !");
-        }finally {
-            return new ResponseEntity<>(loginResponseDTO, HttpStatus.OK);
         }
+            return new ResponseEntity<>(loginResponseDTO, HttpStatus.OK);
     }
 
     @PostMapping("/auth/refreshtoken")

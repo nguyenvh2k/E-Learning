@@ -7,8 +7,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class ResponseDTO<T> extends AbstractResponseDTO{
-    private T object;
+@AllArgsConstructor
+public class PasswordReset {
+    private String email;
+    private int code;
 }

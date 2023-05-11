@@ -9,12 +9,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @OpenAPIDefinition(info = @Info(title = "E-Learning API", version = "v1.0"))
-@SecurityScheme(
-        name = "Bearer Token",
-        type = SecuritySchemeType.HTTP,
-        bearerFormat = "JWT",
-        scheme = "bearer"
-)
 public class OpenApiConfig {
 
 }

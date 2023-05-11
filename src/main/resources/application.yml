@@ -1,14 +1,13 @@
 # postgre datasource
 spring:
   datasource:
-    url: jdbc:postgresql://dpg-cgd5b7qk728mugdoth00-a.singapore-postgres.render.com/blogjava
-    username: smile
-    password: ugIiKbfiigBWiRlfKD8Lq0699OZNEihh
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:mysql://containers-us-west-28.railway.app:6699/railway
+    username: root
+    password: zF01VUmRYJk6QQtxnbFD
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
   output:
     ansi:
       enabled: always

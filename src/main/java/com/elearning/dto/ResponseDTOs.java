@@ -7,8 +7,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class ResponseDTO<T> extends AbstractResponseDTO{
-    private T object;
+@AllArgsConstructor
+public class ResponseDTOs<T> {
+    private boolean success;
+    private int code;
+    private T data;
+    private String message;
 }

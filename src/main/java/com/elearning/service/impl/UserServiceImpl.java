@@ -1,6 +1,7 @@
 package com.elearning.service.impl;
 
 import com.elearning.constant.SystemConstant;
+import com.elearning.dto.PasswordReset;
 import com.elearning.dto.RegisterDTO;
 import com.elearning.entity.Role;
 import com.elearning.entity.User;
@@ -100,6 +101,32 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
+    @Override
+    public PasswordReset resetPasswordByEmail(String email) {
+        Random rd = new Random();
+        PasswordReset passwordReset = new PasswordReset();
+        Boolean emailExist = checkEmailExist(email);
+        if (!emailExist){
+            passwordReset.setCode(0);
+            passwordReset.setEmail(email);
+            return passwordReset;
+        }
+        passwordReset.setCode(rd.nextInt(100000));
+        passwordReset.setEmail(email);
+        EmailService.sendEmail(email, "Kích hoạt tài khoản!",
+                "<h4>Mã xác nhận là:<h4> <h3>" + passwordReset.getCode() + "</h3>");
+        return passwordReset;
+    }
+
+    @Override
+    public Boolean checkEmailExist(String email) {
+        User user = userRepository.findByEmail(email);
+        if (user==null){
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Update email
      *
@@ -135,4 +162,10 @@ public class UserServiceImpl implements UserService {
         userRepository.updatePassword(passwordEncoder.encode(newPassword),user.getId());
     }
 
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public void updatePasswordByEmail(String newPassword, String email) {
+        newPassword = passwordEncoder.encode(newPassword);
+        userRepository.updatePasswordByEmail(newPassword,email);
+    }
 }

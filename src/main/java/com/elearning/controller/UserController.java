@@ -1,5 +1,6 @@
 package com.elearning.controller;
 
+import com.elearning.constant.SystemConstant;
 import com.elearning.dto.*;
 import com.elearning.entity.User;
 import com.elearning.service.UserService;
@@ -8,18 +9,14 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/v1")
-@SecurityRequirement(name = "bearerAuth")
 public class UserController {
 
     @Autowired
@@ -37,8 +34,8 @@ public class UserController {
     @PostMapping("/user")
     public ResponseEntity<Object> createUser(@ModelAttribute RegisterDTO registerDTO){
         User user = userService.saveUser(registerDTO);
-        RegisterResponse registerResponse = new RegisterResponse();
-        registerResponse.setType("Register");
+        RegisterAbstractResponse registerResponse = new RegisterAbstractResponse();
+        registerResponse.setType(SystemConstant.TYPE_REGISTER);
         if (user != null){
             registerResponse.setSuccess(true);
             UserDTO dto = new UserDTO();
@@ -47,11 +44,11 @@ public class UserController {
             dto.setEmail(user.getEmail());
             registerResponse.setUserDTO(dto);
             registerResponse.setSuccess(true);
-            registerResponse.setCode(200);
+            registerResponse.setCode(SystemConstant.CODE_200);
             registerResponse.setMessage("Success !");
         }else {
             registerResponse.setSuccess(false);
-            registerResponse.setCode(403);
+            registerResponse.setCode(SystemConstant.CODE_403);
             registerResponse.setMessage("Username or email existed !");
         }
 
@@ -65,9 +62,11 @@ public class UserController {
      * @param authentication
      * @return Object
      */
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/user/info")
     public ResponseEntity<Object> getUserInfo(Authentication authentication){
         MyUser myUser = (MyUser) authentication.getPrincipal();
+        System.out.println(authentication.getAuthorities());
         User user = userService.findById(myUser.getId());
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
@@ -84,15 +83,15 @@ public class UserController {
                                               Principal principal){
         String username = principal.getName();
         User user= userService.findByUsername(username);
-        Boolean result = userService.updateEmail(email,user.getId());
-        ChangeEmailDTO changeEmailDTO = new ChangeEmailDTO();
+        boolean result = userService.updateEmail(email,user.getId());
+        ChangeEmailDTOAbstract changeEmailDTO = new ChangeEmailDTOAbstract();
         changeEmailDTO.setType("ChangeEmail");
         if (!result){
-            changeEmailDTO.setCode(401);
+            changeEmailDTO.setCode(SystemConstant.CODE_403);
             changeEmailDTO.setSuccess(false);
             changeEmailDTO.setMessage("Change email failed !");
         }else {
-            changeEmailDTO.setCode(200);
+            changeEmailDTO.setCode(SystemConstant.CODE_200);
             changeEmailDTO.setSuccess(true);
             changeEmailDTO.setMessage("Change email successfully !");
         }
@@ -106,6 +105,8 @@ public class UserController {
      * @param authentication
      * @return Object
      */
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("hasAnyAuthority('MEMBER')")
     @PutMapping("/user/password")
     public ResponseEntity<Object> changePassword(@RequestParam(value = "oldPassword",required = true,defaultValue = "")String oldPassword,
                                                  @RequestParam(value = "newPassword",required = true,defaultValue = "")String newPassword,
@@ -113,10 +114,10 @@ public class UserController {
         MyUser myUser = (MyUser) authentication.getPrincipal();
         User user = userService.findById(myUser.getId());
         userService.updatePassword(user,oldPassword,newPassword);
-        PasswordResponse passwordResponse = new PasswordResponse();
+        PasswordAbstractResponse passwordResponse = new PasswordAbstractResponse();
         passwordResponse.setSuccess(true);
         passwordResponse.setType("Change password");
-        passwordResponse.setCode(200);
+        passwordResponse.setCode(SystemConstant.CODE_200);
         passwordResponse.setMessage("Change password successfully !");
         return new ResponseEntity<>(passwordResponse,HttpStatus.OK);
     }
