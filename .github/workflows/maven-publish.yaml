@@ -19,10 +19,9 @@ jobs:
     - name: Build with Maven
       run:
         mvn clean package --file pom.xml
-    - uses: ncipollo/release-action@v1
-      with:
-        name: ${{ env.GITHUB_REF_NAME }}
-        tag: ${{ env.GITHUB_REF_NAME }}
-        artifacts: "target/E-Learning-0.0.1-SNAPSHOT.jar"
-        token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload artifact for deployment job
+      uses: actions/upload-artifact@v2
+        with:
+          name: elearning
+          path: '$/target/*.jar'
 
