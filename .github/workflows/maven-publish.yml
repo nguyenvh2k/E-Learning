@@ -20,7 +20,7 @@ jobs:
       run:
         mvn clean package --file pom.xml
     - name: Step 3 - Use the Upload Artifact GitHub Action
-    - uses: actions/upload-artifact@v3
-         with:
-           name: learing
-           path: target/E-Learning-0.0.1-SNAPSHOT.jar
+      uses: actions/upload-artifact@v3
+       with:
+         name: learing
+         path: target/E-Learning-0.0.1-SNAPSHOT.jar
