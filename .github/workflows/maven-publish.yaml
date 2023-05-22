@@ -19,8 +19,10 @@ jobs:
     - name: Build with Maven
       run:
         mvn clean package --file pom.xml
-    - name: Step 3 - Use the Upload Artifact GitHub Action
-      uses: actions/upload-artifact@v3
-       with:
-         name: learing
-         path: target/E-Learning-0.0.1-SNAPSHOT.jar
+    - uses: ncipollo/release-action@v1
+      with:
+        name: ${{ env.GITHUB_REF_NAME }}
+        tag: ${{ env.GITHUB_REF_NAME }}
+        artifacts: "target/E-Learning-0.0.1-SNAPSHOT.jar"
+        token: ${{ secrets.GITHUB_TOKEN }}
+
