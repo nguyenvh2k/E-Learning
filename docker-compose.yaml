@@ -1,0 +1,6 @@
+version: '3.0'
+services:
+  api-elearning:
+    image: elearing:latest
+    ports:
+      - 8080:8080
