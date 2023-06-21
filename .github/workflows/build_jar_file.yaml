@@ -1,28 +1,59 @@
-name: Build and deploy JAR app 
-
+name: Build/Push to GHCR and Deloy VPS
 on:
+  # Trigger the workflow via push on main branch
   push:
     branches:
       - main
-  workflow_dispatch:
-
 jobs:
-  build:
+  # Builds a Docker Image and pushes it to Github Container Registry
+  check:
+    name:  Test
     runs-on: ubuntu-latest
-
+    environment: production
+    # use the backend folder as the default working directory for the job
+    defaults:
+      run:
+        working-directory: .
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Java version
-        uses: actions/setup-java@v1
+      # Checkout the Repository
+      - name: Checking out the repository
+        uses: actions/checkout@v2
+  build_prod:
+    name: Build
+    runs-on: ubuntu-latest
+    needs:
+      check
+    environment: production
+    steps:
+      # Setting up Docker Builder
+      - name: Set up Docker Builder
+        uses: docker/setup-buildx-action@v1
+      - name: Logging into GitHub Container Registry
+        uses: docker/login-action@v1
         with:
-          java-version: '11'
-
-      - name: Build with Maven
-        run: mvn clean install
-
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v2
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and Pushing Image to Github Container Registry
+        uses: docker/build-push-action@v2
         with:
-          name: java-app
-          path: './target/*.jar'
+          push: true
+          tags: ghcr.io/${{ github.repository }}:latest
+  deloy:
+    name: Deloy
+    runs-on: ubuntu-latest
+    needs:
+      [check,build_prod]
+    environment: production
+    steps:
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd logjava
+            # Login to Github Container Registry
+            sudo docker login https://ghcr.io -u ${{ github.repository_owner }} -p ${{ secrets.GITHUB_TOKEN }}
+            ./deloy.sh

@@ -1,9 +1,8 @@
 package com.elearning.service;
 
-import com.elearning.dto.PasswordReset;
-import com.elearning.dto.RegisterDTO;
+import com.elearning.dto.request.PasswordReset;
+import com.elearning.dto.request.RegisterDTO;
 import com.elearning.entity.User;
-import lombok.extern.java.Log;
 
 public interface UserService {
     User findById(Long userId);

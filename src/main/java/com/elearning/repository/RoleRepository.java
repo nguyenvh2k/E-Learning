@@ -1,6 +1,6 @@
 package com.elearning.repository;
 
-import com.elearning.dto.RoleName;
+import com.elearning.dto.response.RoleName;
 import com.elearning.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

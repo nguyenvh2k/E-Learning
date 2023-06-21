@@ -1,4 +1,4 @@
-package com.elearning.dto;
+package com.elearning.dto.request;
 
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package com.elearning.dto;
+package com.elearning.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,8 +1,8 @@
 package com.elearning.service.impl;
 
 import com.elearning.constant.SystemConstant;
-import com.elearning.dto.PasswordReset;
-import com.elearning.dto.RegisterDTO;
+import com.elearning.dto.request.PasswordReset;
+import com.elearning.dto.request.RegisterDTO;
 import com.elearning.entity.Role;
 import com.elearning.entity.User;
 import com.elearning.exception.PasswordIncorrectException;

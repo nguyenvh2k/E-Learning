@@ -1,8 +1,8 @@
 package com.elearning.controller;
 
 import com.elearning.constant.SystemConstant;
-import com.elearning.dto.PasswordReset;
-import com.elearning.dto.ResponseDTOs;
+import com.elearning.dto.request.PasswordReset;
+import com.elearning.dto.response.ResponseDTOs;
 import com.elearning.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

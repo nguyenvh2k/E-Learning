@@ -1,4 +1,4 @@
-package com.elearning.dto;
+package com.elearning.entity;
 
 import lombok.Getter;
 import lombok.Setter;

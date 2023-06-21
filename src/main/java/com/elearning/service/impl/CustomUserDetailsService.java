@@ -1,8 +1,6 @@
 package com.elearning.service.impl;
 
-import com.elearning.dto.MyUser;
-import com.elearning.dto.RoleName;
-import com.elearning.entity.Role;
+import com.elearning.entity.MyUser;
 import com.elearning.entity.User;
 import com.elearning.repository.RoleRepository;
 import com.elearning.repository.UserRepository;
@@ -16,8 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {

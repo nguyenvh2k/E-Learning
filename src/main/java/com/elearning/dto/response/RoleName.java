@@ -1,4 +1,4 @@
-package com.elearning.dto;
+package com.elearning.dto.response;
 
 public interface RoleName {
     String getName();

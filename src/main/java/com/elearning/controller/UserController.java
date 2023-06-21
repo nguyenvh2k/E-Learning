@@ -1,7 +1,12 @@
 package com.elearning.controller;
 
 import com.elearning.constant.SystemConstant;
-import com.elearning.dto.*;
+import com.elearning.dto.request.RegisterDTO;
+import com.elearning.dto.response.ChangeEmailDTOAbstract;
+import com.elearning.dto.response.PasswordAbstractResponse;
+import com.elearning.dto.response.RegisterAbstractResponse;
+import com.elearning.dto.response.UserDTO;
+import com.elearning.entity.MyUser;
 import com.elearning.entity.User;
 import com.elearning.service.UserService;
 import com.elearning.service.impl.RefreshTokenService;
@@ -17,6 +22,7 @@ import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/v1")
+@CrossOrigin("*")
 public class UserController {
 
     @Autowired

@@ -1,19 +1,12 @@
 package com.elearning.jwt;
 
 
-import com.elearning.dto.MyUser;
-import com.elearning.service.impl.CustomUserDetailsService;
+import com.elearning.entity.MyUser;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.WebUtils;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-import java.util.Map;
 
 @Component
 @Slf4j
