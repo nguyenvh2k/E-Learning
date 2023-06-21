@@ -53,7 +53,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            cd elearing
+            cd elearning
             # Login to Github Container Registry
             sudo docker login https://ghcr.io -u ${{ github.repository_owner }} -p ${{ secrets.GITHUB_TOKEN }}
             ./start.sh
