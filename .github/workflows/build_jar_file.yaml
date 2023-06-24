@@ -56,4 +56,5 @@ jobs:
             cd elearning
             # Login to Github Container Registry
             sudo docker login https://ghcr.io -u ${{ github.repository_owner }} -p ${{ secrets.GITHUB_TOKEN }}
+            curl -I https://ghcr.io/v2/
             ./start.sh
